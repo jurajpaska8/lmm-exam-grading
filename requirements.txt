@@ -1,0 +1,16 @@
+pydantic>=2.12.5
+Pillow>=12.1.1
+pypdfium2>=4.30.0
+python-dotenv
+ollama
+httpx
+truststore
+tenacity
+google-genai>=1.69.0
+# per-student PDF assembly
+pypdf>=5.2.0
+# anonymization
+PyMuPDF
+numpy
+opencv-python
+pytesseract

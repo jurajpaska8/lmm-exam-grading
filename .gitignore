@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.vscode/
+
+# Student data is never part of the repository
+assignments/students.txt
+assignments/y2026/exam/raw_pdfs/
+assignments/y2026/exam/generated_pdfs/
+assignments/y2026/exam/anonymized_pdfs/
+assignments/y2026/exam/results/
+assignments/y2026/exam/results-pairing/
+assignments/y2026/exam/results-validation/
