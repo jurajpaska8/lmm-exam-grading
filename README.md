@@ -22,6 +22,7 @@ The scanned exams are **not** included. They contain student handwriting and are
 | `assignments/y2026/exam/scripts/script_compare_csv.py` | Accuracy of the page-to-student matching against a manual assignment |
 | `assignments/y2026/exam/scripts/generate_pdfs.py` | Assembles one PDF per student from the scanned collections |
 | `helpers/anonymization.py` | OCR-based (Tesseract) redaction of the name field |
+| `script_example.py`, `examples/` | Example: one anonymized submission, its stored paper results, and a script to grade it |
 | `data/scores_per_question.csv` | Scores of the 90 evaluated submissions (see below) |
 | `script_stats.py` | Recomputes the grading-agreement results of the paper from the CSV |
 
@@ -51,6 +52,19 @@ cp .env.example .env   # server URL and optional credentials
 ```
 
 The anonymization step also needs the [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) binary.
+
+## Quick start: grade the example submission
+
+`examples/000.pdf` is one anonymized submission (four scanned pages, eight questions), the one shown in Fig. 4 and Table I of the paper. To grade it with the configuration from the paper:
+
+```
+python script_example.py               # qwen3.6
+python script_example.py gemma4:31b
+```
+
+The script prints, per question, the human score, the scores reported in the paper (`examples/expected/`) and the score of this run, and writes the JSON result and an HTML report to `examples/output/`. Small differences from the paper are expected: the example PDF is the anonymized (re-rendered) scan, not the original one, and model versions behind a tag can change.
+
+In the HTML report, compare the transcription (*Extracted Text*) of question 1 with the scan: in the paper's run, Qwen3.6 added a line `buff[j] = '\0';` that the student did not write (see the Discussion section of the paper).
 
 ## Running the pipeline
 

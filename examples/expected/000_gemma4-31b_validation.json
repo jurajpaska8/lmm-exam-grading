@@ -1,0 +1,63 @@
+{
+  "validation_metadata": {
+    "validation_model": "gemma4:31b",
+    "start_time": "2026-06-03T22:15:00.925203",
+    "context_length": 32768,
+    "duration": 40.78478980064392,
+    "end_time": "2026-06-03T22:15:41.709993",
+    "temperature": 0.0
+  }, 
+  "llm_validation_response": {
+    "validations": [
+      {
+        "subassignment_id": "RT1",
+        "extracted_text": "int length = strlen(str);\nint j = 0;\nchar* buffer = malloc(length + 1);\nfor (int i = 0; i < length; i++) {\n    if (isalpha(str[i])) {\n        buffer[j] = str[i];\n        j++;\n    }\n}\nreturn buffer;",
+        "validation_text": "The student correctly identifies the need to calculate the length of the input string, allocates memory for the buffer, and iterates through the input string, using isalpha() to filter out non-alphabetic characters. However, they forgot to null-terminate the resulting string (buffer[j] = '\\0';) before returning it. This is a critical error in C, as it would lead to undefined behavior when printing or using the buffer. \n\nCorrectness: 80%",
+        "percentage": 0.8
+      },
+      {
+        "subassignment_id": "RT2",
+        "extracted_text": "int length = strlen(pole[0]);\nchar *rps;\nfor (int i = 0; i < n; i++) {\n    if (length < strlen(pole[i])) {\n        length = strlen(pole[i]);\n        index = pole[i];\n    }\n}\nreturn rps; // (Wait, the student wrote 'return rps' but didn't assign it properly)\n// Looking closer at the image: \n// int length = strlen(pole[0]);\n// char *rps;\n// for (int i = 0; i < n; i++) { \n//     if (length < strlen(pole[i])) { \n//         length = strlen(pole[i]);\n//         index = pole[i];\n//     } \n// }\n// return rps; \n// (Actually, the student wrote 'strcpy(rps, pole[index]);' but rps is uninitialized)\n// Let's re-examine the image carefully.\n// The student wrote: \n// int length = strlen(pole[0]);\n// char *rps;\n// for (int i = 0; i < n; i++) { \n//     if (length < strlen(pole[i])) { \n//         length = strlen(pole[i]);\n//         index = pole[i];\n//     } \n// }\n// strcpy(rps, pole[index]);\n// return rps;",
+        "validation_text": "The student's logic for finding the longest string is mostly correct, but there are several major issues. First, they use an uninitialized pointer 'rps' and then try to use it as a destination for 'strcpy', which will cause a crash. Second, they assign a pointer to an integer 'index' (index = pole[i]), which is a type mismatch. Third, they don't handle the case where the array is empty or n=0. \n\nCorrectness: 40%",
+        "percentage": 0.4
+      },
+      {
+        "subassignment_id": "RT3",
+        "extracted_text": "int condition = 1;\nint count = 0;\nfor (int i = 0; i < rows; i++) {\n    condition = 1;\n    for (int j = 0; j < cols; j++) {\n        if (M[i][j] != 0) {\n            condition = 0;\n            break;\n        }\n    }\n    if (condition) {\n        count++;\n    }\n}\nreturn count;",
+        "validation_text": "The student's solution is logically correct and perfectly implements the requirement to count zero rows in a matrix. They use a flag 'condition' to track if a row is entirely zeros and correctly increment the count when the flag remains true. \n\nCorrectness: 100%",
+        "percentage": 1.0
+      },
+      {
+        "subassignment_id": "RT4",
+        "extracted_text": "void swap(int *p1, int *p2) {\n    int p = *p1;\n    *p1 = *p2;\n    *p2 = p;\n}\n\nvoid min_first(int size, int data[size]) {\n    int min = data[0];\n    int i = 0;\n    int index = 0;\n    for (int i = 0; i < size; i++) {\n        if (min > data[i]) {\n            min = data[i];\n            index = i;\n        }\n    }\n    swap(&data[index], &data[0]);\n}",
+        "validation_text": "The student correctly implements both the 'swap' function and the 'min_first' function. The swap function correctly uses pointers to exchange values. The min_first function correctly identifies the index of the minimum element and then calls the swap function to move it to the first position. \n\nCorrectness: 100%",
+        "percentage": 1.0
+      },
+      {
+        "subassignment_id": "RT5",
+        "extracted_text": "f = fopen(filename, \"r\");\nif (f == NULL)\nstr = (char*) malloc(size);\nbytes_read = fread(str, 1, size, f);\nstr[bytes_read] = '\\0';\nfclose(f);",
+        "validation_text": "The student correctly fills in the blanks for opening the file, checking for NULL, allocating memory, and closing the file. They also correctly add the null-terminator to the end of the string read from the file, which is a crucial detail. \n\nCorrectness: 100%",
+        "percentage": 1.0
+      },
+      {
+        "subassignment_id": "RT6",
+        "extracted_text": "// char buffer[size]; // (commented out)\n// char *buffer = malloc(size * sizeof(char));\n// fopen(f); // (commented out)\n// FILE *f = fopen(\"f\", \"r\"); // (Wait, the student wrote something like this, but the original code had 'f' as a parameter)\n// while ((c = fgetc(f)) != EOF) {\n// if (ix == size - 1) {\n// size += 1024;\n// realloc(buffer, size);\n// }\n// if (c == '\\n') break;\n// buffer[ix] = c;\n// }\n// return buffer;",
+        "validation_text": "The student attempted to fix the errors in the provided code. They commented out the wrong buffer declaration (stack-allocated array with variable size) and tried to replace it with dynamic allocation. However, their 'fopen' fix is not correct as they try to open a file that is already open (the function parameter is a FILE*). They also didn't fix the 'realloc' call, which doesn't return the value to the buffer pointer. \n\nCorrectness: 50%",
+        "percentage": 0.5
+      },
+      {
+        "subassignment_id": "RT7",
+        "extracted_text": "for (int i = 0; i < NPROP; i++) {\n    if (strcmp(props[i].name, name) == 0) {\n        return &props[i];\n    }\n}\nreturn NULL;",
+        "validation_text": "The student's solution is logically correct. They iterate through the array of properties, use strcmp() to compare the name of each property with the target name, and return a pointer to the property if found, or NULL if not found. \n\nCorrectness: 100%",
+        "percentage": 1.0
+      },
+      {
+        "subassignment_id": "RT8",
+        "extracted_text": "int cash = 0;\ncash += player->cash;\nfor (int i = 0; i < player->num_props; i++) {\n    cash += player->owned[i]->price;\n}\nreturn cash;",
+        "validation_text": "The student's solution is logically correct. They correctly sum the player's cash and the price of all owned properties by accessing the property price through the pointer in the 'owned' array. \n\nCorrectness: 100%",
+        "percentage": 1.0
+      }
+    ]
+  },
+  "filename": "000.pdf"
+}

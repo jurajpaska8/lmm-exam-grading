@@ -1,0 +1,63 @@
+{
+  "validation_metadata": {
+    "validation_model": "qwen3.6",
+    "start_time": "2026-06-03T09:48:36.139916",
+    "context_length": 32768,
+    "duration": 26.144705057144165,
+    "end_time": "2026-06-03T09:49:02.284621",
+    "temperature": 0.0
+  },
+  "llm_validation_response": {
+    "validations": [
+      {
+        "subassignment_id": "RT1",
+        "extracted_text": "int length = strlen(str);\nint i = 0;\nchar *buff = malloc(length);\nfor (int i = 0; i < length; i++) {\nif (isalpha(str[i])) {\nbuff[j] = str[i];\nj++;\n}\n}\nbuff[j] = '\\0';\nreturn buff;",
+        "validation_text": "The student's solution is mostly correct but has a critical bug. The variable `j` used to index the new string `buff` is never initialized. It should be initialized to 0 before the loop. Also, the size of the allocated buffer should be `length + 1` to accommodate the null terminator, although `length` might suffice if the string contains only letters, it's safer to allocate `length + 1`. The logic of iterating and checking `isalpha` is correct. The final null termination `buff[j] = '\\0'` is correct assuming `j` is initialized.",
+        "percentage": 0.75
+      },
+      {
+        "subassignment_id": "RT2",
+        "extracted_text": "int length;\nchar *top;\nfor (int i = 0; i < n; i++) {\nif (strlen(pole[i]) > length) {\nlength = strlen(pole[i]);\ntop = pole[i];\n}\n}\nreturn top;",
+        "validation_text": "The student's solution has a logical error. The variable `length` is not initialized. If the first string is the longest, `length` (garbage value) might be larger than `strlen(pole[i])`, causing the condition to fail. It should be initialized to -1 or 0. Also, `top` is not initialized, which could lead to returning a garbage pointer if the loop doesn't update it (though with `n > 0` it will). The logic of comparing lengths is correct.",
+        "percentage": 0.6
+      },
+      {
+        "subassignment_id": "RT3",
+        "extracted_text": "int condition = 1;\nint count = 0;\nfor (int i = 0; i < rows; i++) {\ncondition = 1;\nfor (int j = 0; j < cols; j++) {\nif (M[i][j] != 0) {\ncondition = 0;\nbreak;\n}\n}\nif (condition) count++;\n}\nreturn count;",
+        "validation_text": "The student's solution is correct. It iterates through each row, checks if all elements are zero using a flag `condition`. If a non-zero element is found, it breaks the inner loop. If the row is all zeros, it increments `count`. Finally, it returns the count. The logic is sound.",
+        "percentage": 1.0
+      },
+      {
+        "subassignment_id": "RT4",
+        "extracted_text": "void swap( int *p1, int *p2 ) {\nint t = *p1;\n*p1 = *p2;\n*p2 = t;\n}\n\nvoid min_first( int size, int data[size] ) {\nint min = data[0];\nint index = 0;\nfor (int i = 1; i < size; i++) {\nif (min > data[i]) {\nmin = data[i];\nindex = i;\n}\n}\nswap(&data[index], &data[0]);\n}",
+        "validation_text": "The student's solution is correct. The `swap` function correctly swaps the values pointed to by `p1` and `p2`. The `min_first` function correctly finds the index of the minimum element (handling the 'first in order' requirement by using `>` instead of `>=`) and then calls `swap` to exchange it with the first element. The logic is sound.",
+        "percentage": 1.0
+      },
+      {
+        "subassignment_id": "RT5",
+        "extracted_text": "f = fopen(filename, \"r\");\nif (f == NULL)\nmalloc(size + 1);\nstr[size] = '\\0';\nclose(f);",
+        "validation_text": "The student's solution has several errors. 1. `fopen` arguments are swapped; it should be `fopen(filename, \"r\")`. 2. The `if` condition checks `f == NULL` which is correct for error handling, but the comment says 'ak sa nepodarilo otvorit subor', so the check is correct. 3. `malloc` is missing the cast or correct usage, it should be `malloc(size + 1)` and assigned to `str`. The student wrote `malloc(size + 1)` but didn't assign it to `str`. 4. `str[size] = '\\0'` is correct for null termination. 5. `close(f)` is incorrect for file streams; it should be `fclose(f)`. 6. The `fread` line is missing in the student's text but the prompt asks to fill blanks. The student filled `f = fopen(filename, \"r\")`, `if (f == NULL)`, `malloc(size + 1)`, `str[size] = '\\0'`, `fclose(f)`. Wait, looking closely at the image, the student wrote `f = fopen(filename, \"r\")`, `if (f == NULL)`, `malloc(size + 1)`, `str[size] = '\\0'`, `fclose(f)`. The `malloc` line is missing the assignment to `str`. The `fread` line is not filled in the blanks provided in the prompt structure, but the student wrote `size_t bytes_read = fread(str, 1, size, f);` in the image? No, the student wrote `str = (char*) malloc(size + 1);` (implied). The student wrote `str[size] = '\\0';` and `fclose(f);`. The `fread` line is already in the code template. The student missed assigning the result of `malloc` to `str`. Also `close` vs `fclose`.",
+        "percentage": 0.5
+      },
+      {
+        "subassignment_id": "RT6",
+        "extracted_text": "FILE *f = fopen(filename, \"r\");\nif (f == NULL) return NULL;\nwhile ((c = fgetc(f)) != EOF) {\nif (ix == size - 1) {\nsize += 1024;\nbuffer = realloc(buffer, size);\n}\nif (c == '\\n') break;\nbuffer[ix] = c;\nix++;\n}\nbuffer[ix] = '\\0';\nreturn buffer;",
+        "validation_text": "The student's solution attempts to fix the errors but introduces new ones or misses some. 1. `char buffer[size]` is a VLA, which is bad practice but valid in C99. However, `realloc` cannot be used on a VLA. It should be a pointer `char *buffer = malloc(1024)`. 2. `fopen(f)` is wrong; `f` is already passed as an argument. It should be removed or `f` is already open. The prompt says 'z otvoreneho suboru', so `fopen` is not needed. 3. `realloc(buffer, size)` needs to be assigned back to `buffer` because `realloc` might move the memory. 4. `ix` is not incremented in the student's text (though `ix++` is written). 5. The null terminator `buffer[ix] = '\\0'` is missing in the student's text. 6. The student wrote `FILE *f = fopen(filename, \"r\");` which is wrong because `f` is an argument. The student also wrote `if (f == NULL) return NULL;` which is correct for `fopen` but `f` is not opened here. The student's code is a mix of corrections and new errors. The core logic of reading and reallocating is there but the implementation is flawed.",
+        "percentage": 0.4
+      },
+      {
+        "subassignment_id": "RT7",
+        "extracted_text": "for (int i = 0; i < NPROP; i++) {\nif (strcmp(props[i].name, name) == 0) {\nreturn &props[i];\n}\n}\nreturn NULL;",
+        "validation_text": "The student's solution is correct. It iterates through the array of properties, uses `strcmp` to compare names, and returns a pointer to the matching property if found. If the loop completes without a match, it returns `NULL`. This matches the requirements.",
+        "percentage": 1.0
+      },
+      {
+        "subassignment_id": "RT8",
+        "extracted_text": "int cash = 0;\ncash += player->cash;\nfor (int i = 0; i < num_props; i++) {\ncash += player->owned[i]->price;\n}\nreturn cash;",
+        "validation_text": "The student's solution is correct. It initializes `cash` to 0, adds the player's current cash, then iterates through the owned properties, adding each property's price to the total. Finally, it returns the total value. The logic is sound.",
+        "percentage": 1.0
+      }
+    ]
+  },
+  "filename": "000.pdf"
+}

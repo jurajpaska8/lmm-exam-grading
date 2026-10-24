@@ -13,3 +13,6 @@ assignments/y2026/exam/anonymized_pdfs/
 assignments/y2026/exam/results/
 assignments/y2026/exam/results-pairing/
 assignments/y2026/exam/results-validation/
+
+# Output of script_example.py
+examples/output/
