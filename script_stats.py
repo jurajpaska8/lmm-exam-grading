@@ -53,6 +53,15 @@ for first, second in (("Q", "M"), ("G", "M"), ("G", "Q")):
     print(f"  {first} vs {second}: avg delta={s['avg']:.2f}, MSE={s['mse']:.2f}, "
           f"higher={s['higher']}, lower={s['lower']}, equal={s['equal']}")
 
+print("\nTotal-score Pearson correlation, mean difference and mean |difference| as % of the maximum (8):")
+for first, second in (("Q", "M"), ("G", "M"), ("G", "Q")):
+    totals_first = [total(r, first) for r in rows]
+    totals_second = [total(r, second) for r in rows]
+    deltas = [a - b for a, b in zip(totals_first, totals_second)]
+    print(f"  {first} vs {second}: r={calculate_correlation(totals_second, totals_first):.2f}, "
+          f"mean diff={100 * sum(deltas) / len(deltas) / NUM_QUESTIONS:.1f}%, "
+          f"mean |diff|={100 * sum(abs(d) for d in deltas) / len(deltas) / NUM_QUESTIONS:.1f}%")
+
 print("\nPer-question Pearson correlation (missing entries left out):")
 for first, second in (("M", "Q"), ("M", "G"), ("Q", "G")):
     values = []
