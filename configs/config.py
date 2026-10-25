@@ -37,3 +37,5 @@ class OllamaSettings:
     BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     AUTH_USERNAME = os.getenv("OLLAMA_USERNAME")
     AUTH_PASSWORD = os.getenv("OLLAMA_PASSWORD")
+    # HTTP read timeout per model call, in seconds
+    TIMEOUT = float(os.getenv("OLLAMA_TIMEOUT", "100"))

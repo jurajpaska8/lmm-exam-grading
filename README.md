@@ -6,7 +6,6 @@ Source code, grading prompt, response schema and per-question scores accompanyin
 
 The pipeline grades scanned handwritten C programming exams with locally hosted, open-weight large multimodal models (Qwen3.6 and Gemma4 via [Ollama](https://ollama.com)) in a single, zero-shot call per submission. The model returns a transcription, a comment and a normalized score in [0, 1] for each of the eight exam questions.
 
-The scanned exams are **not** included. They contain student handwriting and are released separately after anonymization.
 
 ## Contents
 
@@ -23,6 +22,7 @@ The scanned exams are **not** included. They contain student handwriting and are
 | `assignments/y2026/exam/scripts/generate_pdfs.py` | Assembles one PDF per student from the scanned collections |
 | `helpers/anonymization.py` | OCR-based (Tesseract) redaction of the name field |
 | `script_example.py`, `examples/` | Example: one anonymized submission, its stored paper results, and a script to grade it |
+| `script_example_name_matching.py`, `script_example_anonymization.py` | Examples of name matching and anonymization on one of your own (non-anonymized) submissions |
 | `data/scores_per_question.csv` | Scores of the 90 evaluated submissions (see below) |
 | `script_stats.py` | Recomputes the grading-agreement results of the paper from the CSV |
 
@@ -66,6 +66,23 @@ The script prints, per question, the human score, the scores reported in the pap
 
 In the HTML report, compare the transcription (*Extracted Text*) of question 1 with the scan: in the paper's run, Qwen3.6 added a line `buff[j] = '\0';` that the student did not write (see the Discussion section of the paper).
 
+## Examples: name matching and anonymization
+
+These need a submission with readable name fields and a class list, which are not part of the repository. Put them in git-ignored locations:
+
+- `examples/private/<id>.pdf`: one submission, numbered by the student's index in the class list (e.g. `000.pdf` for the first student);
+- `assignments/students.txt`: one name per line, in alphabetical order (see `examples/dummy_students.txt`).
+
+**Run name matching with `--no-think`.** With the model's thinking mode enabled, current versions of the models can keep thinking on a single page until they hit the context limit or the HTTP timeout, without returning an answer.
+
+```
+python script_example_name_matching.py --no-think              # qwen3.6
+python script_example_name_matching.py gemma4:31b --no-think
+python script_example_anonymization.py
+```
+
+The name-matching script reports, for each page, the matched student, the confidence and whether the match is correct. The anonymization script writes `examples/private/output/<id>_anonymized.pdf`; check that the name is blacked out on every page.
+
 ## Running the pipeline
 
 All scripts are run from the repository root. Data folders (git-ignored) are expected under `assignments/y2026/exam/`:
@@ -74,6 +91,7 @@ All scripts are run from the repository root. Data folders (git-ignored) are exp
    ```
    python -m assignments.y2026.exam.scripts.script_correlate_assignments
    ```
+   The script runs with thinking disabled (`THINK = False`, see the previous section).
 2. `results-pairing/actual_assignments.csv`: the verified page-to-student assignment, from which
    ```
    python -m assignments.y2026.exam.scripts.generate_pdfs
@@ -91,8 +109,8 @@ All scripts are run from the repository root. Data folders (git-ignored) are exp
 | Setting | Value |
 |---|---|
 | Models (Ollama tags) | `qwen3.6` (36.0B MoE, Q4_K_M), `gemma4:31b` (31.3B, Q4_K_M) |
-| Thinking mode | Ollama default (enabled) |
-| Context length | 32,768 tokens |
+| Thinking mode | Ollama default (enabled); for name matching now disabled, see above |
+| Context length | 32,768 tokens for grading, 8,192 for name matching |
 | Temperature | 0; re-run of failed submissions at 0.05 (Qwen3.6: 5, Gemma4: 11 of 90) |
 | Page images | rendered at ~288 DPI, grayscale, sent as JPEG |
 | Hardware | 2× NVIDIA RTX PRO 6000 Blackwell (96 GB), 2× AMD EPYC 9135, 1 TB RAM |

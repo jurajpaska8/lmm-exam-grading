@@ -16,3 +16,6 @@ assignments/y2026/exam/results-validation/
 
 # Output of script_example.py
 examples/output/
+
+# Real (non-anonymized) data for local testing only, never committed
+examples/private/

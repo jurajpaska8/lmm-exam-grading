@@ -14,10 +14,13 @@ import csv
 # IoC and DI
 
 USED_MODEL = LOCAL_MODEL_GEMMA4  # or LOCAL_MODEL_QWEN3, GOOGLE_GEMINI_MODEL_FLASH_2_5
+# Thinking off: with thinking enabled, current model versions can think past the context
+# limit or the HTTP timeout on a single page. None = model default (used in the paper's runs).
+THINK : bool | None = False
 if USED_MODEL.startswith("gemini"):
     llm_adapter = GeminiAdapter(api_key_provider=RoundRobinApiKeyProvider())
 else:
-    llm_adapter = OllamaAdapter(config=OllamaSettings())
+    llm_adapter = OllamaAdapter(config=OllamaSettings(), think=THINK)
 ASSIGNMENT_FOLDER_ROOT = "assignments/y2026"
 ASSIGNMENT_NAME = "exam"
 PROMPT_VERSION = "v1"

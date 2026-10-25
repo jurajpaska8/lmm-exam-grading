@@ -79,8 +79,10 @@ def _before_sleep_print(retry_state):
 
 
 class OllamaAdapter(LLMAdapter):
-    def __init__(self, config: OllamaSettings):
+    def __init__(self, config: OllamaSettings, think: bool | None = None):
         self.config = config
+        # None keeps the model's default (thinking enabled for qwen3.6 and gemma4, as in the paper)
+        self.think = think
         # Windows-compatible SSL context
         ctx = truststore.SSLContext()
         
@@ -94,7 +96,7 @@ class OllamaAdapter(LLMAdapter):
             verify=ctx,
             base_url=self.config.BASE_URL,
             auth=auth,
-            timeout=100.0,
+            timeout=self.config.TIMEOUT,
             follow_redirects=True
         )
         
@@ -142,12 +144,21 @@ class OllamaAdapter(LLMAdapter):
                     prompt=user_prompt,
                     images=ollama_images,
                     options=options, # If empty, ollama uses default
+                    think=self.think,
                     stream=False,
                     format=response_model.model_json_schema(),
                 )
         # Extract both fields
         final_text = response.get('response', '')
         thinking_text = response.get('thinking', '')
+
+        # Generation stopped at the context limit (typically during thinking) before the JSON answer
+        if not final_text.strip() and response.get('done_reason') == 'length':
+            raise ValueError(
+                f"Model {model} reached the context limit (num_ctx={context_length}) before producing an answer "
+                f"(prompt tokens: {response.get('prompt_eval_count')}, generated tokens: {response.get('eval_count')}). "
+                "Increase the context length."
+            )
 
         # If the final response is empty (common in Qwen 3.6), 
         # use the thinking field as the source of your JSON.
