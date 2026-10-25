@@ -38,7 +38,7 @@ One row per evaluated submission (90 rows), identified only by an anonymous ID.
 python script_stats.py
 ```
 
-prints the total-points agreement (Table III of the paper) and the per-question Pearson correlations.
+prints all grading-agreement statistics of the paper: the total-points agreement (Table III), the per-question correlations and mean differences (Table IV), standard deviations, ranges and bootstrap 95% confidence intervals of the differences, the paired comparison of Qwen3.6 and Gemma4, and the comparison of re-run submissions with the rest. Resampling uses a fixed seed, so the output is reproducible; no packages beyond the standard library are needed.
 
 ## Setup
 
